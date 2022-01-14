@@ -167,15 +167,16 @@ export default {
     ALGORAND:{
 
         generate:()=>{
+            
             let acc=algosdk.generateAccount()
 
             return {acc,mnemonic:algosdk.secretKeyToMnemonic(acc.sk)}
         
         },
         
-        sign:(data,privateKey)=>algosdk.signBytes(Buffer.from(data),privateKey),
+        sign:(data,privateKey)=>Buffer.from(algosdk.signBytes(Buffer.from(data),privateKey)).toString('base64'),
         
-        verify:(data,signature,address)=>algosdk.verifyBytes(Buffer.from(data),signature,address),
+        verify:(data,signature,address)=>algosdk.verifyBytes(Buffer.from(data),Buffer.from(signature,'base64'),address),
         
         deriveAccFromMnemonic:phrase=>algosdk.mnemonicToSecretKey(phrase)
 
