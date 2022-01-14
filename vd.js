@@ -60,9 +60,14 @@ T-Transfer(transfer everything you need to verify signature)
 
 */
 
+
+import {Keypair} from 'stellar-sdk'
 import rip from 'ripple-keypairs'
+import algosdk from 'algosdk'
 import crypto from 'crypto'
 import Web3 from 'web3'
+
+
 
 let web3=new Web3()
 
@@ -88,7 +93,7 @@ export default {
 
     },
 
-    
+
 
 
     //KLYNTAR native format
@@ -155,6 +160,26 @@ export default {
         verify:(signature,address)=>web3.eth.accounts.recover(signature)===address
 
     },
+
+
+
+
+    ALGORAND:{
+
+        generate:()=>{
+            let acc=algosdk.generateAccount()
+
+            return {acc,mnemonic:algosdk.secretKeyToMnemonic(acc.sk)}
+        
+        },
+        
+        sign:(data,privateKey)=>algosdk.signBytes(Buffer.from(data),privateKey),
+        
+        verify:(data,signature,address)=>algosdk.verifyBytes(Buffer.from(data),signature,address),
+        
+        deriveAccFromMnemonic:phrase=>algosdk.mnemonicToSecretKey(phrase)
+
+    }
 
 
 
