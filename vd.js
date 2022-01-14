@@ -61,6 +61,8 @@ T-Transfer(transfer everything you need to verify signature)
 */
 
 
+
+import {FilecoinSigner} from '@blitslabs/filecoin-js-signer'
 import {Keypair} from 'stellar-sdk'
 import rip from 'ripple-keypairs'
 import algosdk from 'algosdk'
@@ -68,8 +70,15 @@ import crypto from 'crypto'
 import Web3 from 'web3'
 
 
+let filecoin_signer = new FilecoinSigner(),
+    
+    web3=new Web3()
 
-let web3=new Web3()
+
+
+
+
+
 
 
 export default {
@@ -180,7 +189,49 @@ export default {
         
         deriveAccFromMnemonic:phrase=>algosdk.mnemonicToSecretKey(phrase)
 
-    }
+    },
+
+
+
+    
+    FILECOIN:{
+
+        generate:async(mnemonicBitsStrength,network,derivationPath=`m/44'/461'/0'/0/0`)=>{
+
+            let mnemonic = await filecoin_signer.wallet.generateMnemonic(mnemonicBitsStrength),
+
+                keyPair = await filecoin_signer.wallet.keyDerive(mnemonic,derivationPath,network)
+
+
+            return {mnemonic,keyPair}
+
+        },
+
+        
+        /**
+        *   To sign random string data
+        *
+        *   @param {string} data String data to sign
+        *   @param {string} privateKey  32-bytes hexadecimal privateKey
+        * 
+        *   @returns {Promise<String>}
+        */
+        sign:(data,privateKey)=>filecoin_signer.utils.signMessage(data, privateKey),
+
+
+        /**
+        *   To verify random string data
+        *
+        *   @param {string} data String data to sign
+        *   @param {string} signature  64-bytes hexadeciml signature
+        *   @param {string} address Address of signer
+        *   @returns {Promise<boolean>} Is valid signature?
+        */
+        verify:(data,signature,address)=>filecoin_signer.utils.verifySignature(data,signature,address)
+
+    },
+
+
 
 
 
