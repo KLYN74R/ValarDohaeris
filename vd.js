@@ -61,6 +61,11 @@ T-Transfer(transfer everything you need to verify signature)
 */
 
 import rip from 'ripple-keypairs'
+import crypto from 'crypto'
+import Web3 from 'web3'
+
+let web3=new Web3()
+
 
 export default {
 
@@ -81,6 +86,76 @@ export default {
 
         verify:(plainText,signature,publicKey)=>rip.verify(plainText,signature,publicKey)
 
-    }
+    },
+
+    
+
+
+    //KLYNTAR native format
+    KLYNTAR:{
+
+
+        generate:()=>new Promise((resolve,reject)=>{
+
+            crypto.generateKeyPair('ed25519',{
+                
+                namedCurve: 'secp256k1',
+                publicKeyEncoding: {type: 'spki',format: 'der'},
+                privateKeyEncoding: {type: 'pkcs8',format: 'der'}
+             
+            },(err, publicKey, privateKey)=>err?reject(false):resolve({pub:publicKey.toString('base64').slice(16),prv:privateKey.toString('base64')}))
+        
+        }).catch(e=>false),
+
+
+
+        sign:(data,privateKey)=>new Promise((resolve,reject)=>
+
+            crypto.sign(null,Buffer.from(data),'-----BEGIN PRIVATE KEY-----\n'+privateKey+'\n-----END PRIVATE KEY-----',(e,sig)=>
+     
+                e?reject(''):resolve(sig.toString('base64'))
+    
+            )
+    
+        ).catch(e=>''),
+
+       
+
+        verify:(data,signature,pubKey)=>new Promise((resolve,reject)=>
+
+            //Add mandatory prefix and postfix to pubkey
+            crypto.verify(null,data,'-----BEGIN PUBLIC KEY-----\n'+'MCowBQYDK2VwAyEA'+pubKey+'\n-----END PUBLIC KEY-----',Buffer.from(signature,'base64'),(e,res)=>
+        
+                e?reject(false):resolve(res)
+        
+            )
+       
+       ).catch(e=>false)
+
+    },
+
+
+
+
+
+    //For EVM chains which supports such format
+    //!Change output data(minimization)
+    ETH_LIKE:{
+
+        generate:()=>{
+            
+            let {address,privateKey}=web3.eth.accounts.create()
+            
+            return {address,privateKey}
+        
+        },
+
+        sign:(data,privateKey)=>web3.eth.accounts.sign(data,privateKey),
+
+        verify:(signature,address)=>web3.eth.accounts.recover(signature)===address
+
+    },
+
+
 
 }
