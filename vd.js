@@ -77,14 +77,18 @@ import {FilecoinSigner} from '@blitslabs/filecoin-js-signer'
 import eosjs from 'eosjs/dist/PublicKey.js'
 import {Keypair} from 'stellar-sdk'
 import rip from 'ripple-keypairs'
+import helium from '@helium/crypto'
 import algosdk from 'algosdk'
+import nacl from 'tweetnacl'
 import crypto from 'crypto'
 import ecc from 'eosjs-ecc'
 import Web3 from 'web3'
 
 
 
-let filecoin_signer = new FilecoinSigner(),
+let { Keypair:HeliumKeypair , Address } = helium,
+
+    filecoin_signer = new FilecoinSigner(),
     
     web3=new Web3()
 
@@ -290,6 +294,8 @@ export default {
     },
 
 
+
+
     EOS:{
         
         generate:()=>ecc.randomKey().then(privateKey=>({privateKey,address:ecc.privateToPublic(privateKey)})),
@@ -302,7 +308,43 @@ export default {
 
         toLegacy:PUB_K1address=>eosjs.PublicKey.fromString(PUB_K1address).toLegacyString()
 
+    },
+
+
+
+
+    HELIUM:{
+
+        generate:async()=>{
+            
+            let kp=await HeliumKeypair.makeRandom()
+
+            return {publicKey:Buffer.from(kp.publicKey).toString('base64'),privateKey:Buffer.from(kp.privateKey).toString('base64'),address:kp.address.b58}
+
+        },
+
+        sign:(data,privateKey)=>
+        
+            Buffer.from(
+                
+                nacl.sign.detached(new Uint8Array(Buffer.from(data)),new Uint8Array(Buffer.from(privateKey,'base64')))
+                
+            ).toString('base64'),
+
+
+
+
+        verify:(data,signature,address)=>
+        
+            nacl.sign.detached.verify(
+                
+                new Uint8Array(Buffer.from(data)),new Uint8Array(Buffer.from(signature,'base64')), new Uint8Array( Address.fromB58(address).publicKey )
+                
+            ),
+
+
     }
+
 
 
 
