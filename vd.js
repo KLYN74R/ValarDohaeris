@@ -43,6 +43,16 @@ V::::::V           V::::::V               l:::::l                               
 
 CREATOR: VLad Chernenko
 GitHub:https://github.com/VladChernenko
+Organization:https://github.com/VladChernenko
+
+
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@                                                      @
+@     Created for ValarDohaeris release for Klyntar    @
+@                                                      @
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
 
 
 ____________________________________________________________Description____________________________________________________________
@@ -62,12 +72,14 @@ T-Transfer(transfer everything you need to verify signature)
 
 
 
+import {crypto as bnbcrypto} from '@binance-chain/javascript-sdk'
 import {FilecoinSigner} from '@blitslabs/filecoin-js-signer'
 import {Keypair} from 'stellar-sdk'
 import rip from 'ripple-keypairs'
 import algosdk from 'algosdk'
 import crypto from 'crypto'
 import Web3 from 'web3'
+
 
 
 let filecoin_signer = new FilecoinSigner(),
@@ -230,6 +242,50 @@ export default {
         verify:(data,signature,address)=>filecoin_signer.utils.verifySignature(data,signature,address)
 
     },
+
+
+
+    BINANCE_CHAIN:{
+
+
+        generateMnemonic:()=>bnbcrypto.generateMnemonic(),
+
+        generate:mnemonic=>{
+            
+            // generate key entropy
+            let privateKey = mnemonic ? bnbcrypto.getPrivateKeyFromMnemonic(mnemonic) : bnbcrypto.generatePrivateKey(),
+    
+                // get an address
+                address = bnbcrypto.getAddressFromPrivateKey(privateKey,'bnb'),
+
+                publicKey = bnbcrypto.getPublicKeyFromPrivateKey(privateKey)
+        
+
+            return {privateKey,address,publicKey}    
+        
+        },
+
+
+
+        sign:(data,privateKey)=>Buffer.from(bnbcrypto.generateSignature(data,privateKey)).toString('base64'),
+
+
+        verify:(data,signature,pubKey)=>bnbcrypto.verifySignature(Buffer.from(signature,'base64'),data,pubKey),
+
+
+        deriveFromMnemonic:mnemonic=>{
+            
+            let privateKey=crypto.getPrivateKeyFromMnemonic(mnemonic),
+
+                publicKey=crypto.getPublicKeyFromPrivateKey(priv),
+
+                address=crypto.getAddressFromPublicKey(pub,'bnb')
+
+            return {privateKey,publicKey,address}
+        
+        },
+
+    }
 
 
 
