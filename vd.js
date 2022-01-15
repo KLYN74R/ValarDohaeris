@@ -74,10 +74,12 @@ T-Transfer(transfer everything you need to verify signature)
 
 import {crypto as bnbcrypto} from '@binance-chain/javascript-sdk'
 import {FilecoinSigner} from '@blitslabs/filecoin-js-signer'
+import eosjs from 'eosjs/dist/PublicKey.js'
 import {Keypair} from 'stellar-sdk'
 import rip from 'ripple-keypairs'
 import algosdk from 'algosdk'
 import crypto from 'crypto'
+import ecc from 'eosjs-ecc'
 import Web3 from 'web3'
 
 
@@ -284,6 +286,21 @@ export default {
             return {privateKey,publicKey,address}
         
         },
+
+    },
+
+
+    EOS:{
+        
+        generate:()=>ecc.randomKey().then(privateKey=>({privateKey,address:ecc.privateToPublic(privateKey)})),
+
+        sign:(data,privateKey)=>ecc.sign(data,privateKey),
+
+        verify:(data,signature,address)=>ecc.verify(signature,data,address),
+
+        toPUB_K1:EOSaddress=>eosjs.PublicKey.fromString(EOSaddress).toString(),
+
+        toLegacy:PUB_K1address=>eosjs.PublicKey.fromString(PUB_K1address).toLegacyString()
 
     }
 
