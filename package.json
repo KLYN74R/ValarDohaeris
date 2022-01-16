@@ -1,6 +1,6 @@
 {
   "name": "@klyntar/valardohaeris",
-  "version": "5.0.0",
+  "version": "6.0.0",
   "description": "Preparation for VD release for Klyntar. Feel free to use in your own projects as a useful module🐱‍🚀",
   "main": "vd.js",
   "type": "module",
