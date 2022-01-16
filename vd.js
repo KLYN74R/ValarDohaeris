@@ -117,13 +117,18 @@ let { Keypair:HeliumKeypair , Address } = helium,
     
     web3=new Web3(),
 
-    arweave = Arweave.init({});
+    arweave = Arweave.init({}),
+    
+    keyRing=new Keyring()
 
 
 
 
 export default {
 
+
+
+    
     // XPR GSVDT scheme
     XRP:{
 
@@ -188,7 +193,6 @@ export default {
        ).catch(e=>false)
 
     },
-
 
 
 
@@ -271,6 +275,7 @@ export default {
         verify:(data,signature,address)=>filecoin_signer.utils.verifySignature(data,signature,address)
 
     },
+
 
 
 
@@ -369,6 +374,8 @@ export default {
     },
 
 
+
+
     ARWEAVE:{
 
         generate:()=>arweave.wallets.generate(),
@@ -383,6 +390,7 @@ export default {
 
 
     },
+
 
 
 
@@ -412,19 +420,45 @@ export default {
     },
 
 
+
+
     POLKADOT:{
 
-        generate:()=>{
+        generate:(mnemonic=mnemonicGenerate())=>{
 
+            let seed=mnemonicToMiniSecret(mnemonic),
 
+                {publicKey,secretKey} = nacl.sign.keyPair.fromSeed(seed)
+
+            return {seed:Buffer.from(seed).toString('base64'), publicKey:Buffer.from(publicKey).toString('base64'), secretKey:Buffer.from(secretKey).toString('base64')}
 
         },
 
-        toKusama:()=>{},
 
-        toSubstrate:()=>{},
+        sign:(data,privateKey)=>
+            
+            //Return signature in base64 format for easy transfer
+            Buffer.from(nacl.sign.detached( new Uint8Array(data),  new Uint8Array(Buffer.from(privateKey,'base64')))).toString('base64'),
 
-        toPolkadot:()=>{},
+
+
+        verify:(data,signature,pubKey)=>
+        
+            nacl.sign.detached.verify(
+                
+                new Uint8Array(data),
+                new Uint8Array(Buffer.from(signature,'base64')),
+                new Uint8Array(Buffer.from(pubKey,'base64'))
+                
+            ),
+
+
+        
+        toKusama:pubKey=>encodeAddress(Buffer.from(pubKey,'base64'),2),
+
+        toSubstrate:pubKey=>encodeAddress(Buffer.from(pubKey,'base64'),42),
+
+        toPolkadot:pubKey=>encodeAddress(Buffer.from(pubKey,'base64'),0),
 
     }
 
