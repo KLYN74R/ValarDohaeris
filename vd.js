@@ -82,9 +82,13 @@ import {Keypair as StellarKeypair} from 'stellar-sdk'
 
 import eosjs from 'eosjs/dist/PublicKey.js'
 
+import {Account} from '@harmony-js/account'
+
 import MinaSDK from "@o1labs/client-sdk"
 
 import{Keyring}from'@polkadot/keyring'
+
+import ALL from '@harmony-js/crypto'
 
 import helium from '@helium/crypto'
 
@@ -101,6 +105,7 @@ import crypto from 'crypto'
 import ecc from 'eosjs-ecc'
 
 import Web3 from 'web3'
+
 
 
 
@@ -472,10 +477,33 @@ export default {
 
         derivePublicKey:privateKey=>MinaSDK.derivePublicKey(privateKey)
 
+    },
+
+
+
+
+    HARMONY:{
+
+        generate:()=>{
+            
+            let acc=new Account()
+
+            return {publicKey:acc.publicKey,privateKey:acc.privateKey,address:acc.address}
+
+        },
+
+
+        sign:(data,privateKey)=>ALL.sign(`0x${Buffer.from(data,'utf-8').toString('hex')}`,privateKey),
+
+
+        verify:(data,signature,pubKey)=>ALL.verifySignature(`0x${Buffer.from(data,'utf-8').toString('hex')}`,signature,pubKey),
+
+
+        toHarmonyFormat:address=>ALL.toBech32(address)
+
+
+
     }
-
-
-
 
 
 }
