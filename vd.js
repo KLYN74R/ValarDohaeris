@@ -75,7 +75,7 @@ T-Transfer(transfer everything you need to verify signature)
 import {crypto as bnbcrypto} from '@binance-chain/javascript-sdk'
 import {FilecoinSigner} from '@blitslabs/filecoin-js-signer'
 import eosjs from 'eosjs/dist/PublicKey.js'
-import {Keypair} from 'stellar-sdk'
+import {Keypair as StellarKeypair} from 'stellar-sdk'
 import helium from '@helium/crypto'
 import rip from 'ripple-keypairs'
 import Pact from 'pact-lang-api'
@@ -359,8 +359,34 @@ export default {
         getAddress:JWK=>arweave.wallets.jwkToAddress(JWK)
 
 
-    }
+    },
 
+
+
+    STELLAR:{
+
+        generate:()=>StellarKeypair.random(),
+
+        sign:(data,keyPair)=>keyPair.sign(Buffer.from(data,'utf-8')).toString('base64'),
+
+        verify:(data,signature,pubKey)=>{
+
+            let kp=StellarKeypair.fromPublicKey(pubKey)//just create pair with no knowledge about private keys but with ability to verify
+
+
+            return kp.verify(Buffer.from(data,'utf8'),Buffer.from(signature,'base64'))
+
+        },
+
+        deriveFromPrivate:(privateKey)=>StellarKeypair.fromSecret(privateKey),
+
+        toTransfer:(keyPair)=>(
+            
+            {pub:keyPair.publicKey(),prv:keyPair.secret()}
+            
+        )
+
+    }
 
 
 
