@@ -86,13 +86,15 @@ import {Account} from '@harmony-js/account'
 
 import MinaSDK from "@o1labs/client-sdk"
 
-import{Keyring}from'@polkadot/keyring'
-
 import ALL from '@harmony-js/crypto'
 
 import helium from '@helium/crypto'
 
 import rip from 'ripple-keypairs'
+
+import secp256k1 from 'secp256k1'
+
+import pac from '@tendermint/sig'
 
 import Arweave from 'arweave'
 
@@ -114,7 +116,6 @@ import Web3 from 'web3'
 
 
 
-
 let { Keypair:HeliumKeypair , Address } = helium,
 
     filecoin_signer = new FilecoinSigner(),
@@ -122,8 +123,8 @@ let { Keypair:HeliumKeypair , Address } = helium,
     web3=new Web3(),
 
     arweave = Arweave.init({}),
-    
-    keyRing=new Keyring()
+
+    {createWalletFromMnemonic} = pac
 
 
 
@@ -502,6 +503,39 @@ export default {
         toHarmonyFormat:address=>ALL.toBech32(address)
 
 
+
+    },
+
+
+    COSMOS:{
+
+        
+        generate:()=>createWalletFromMnemonic(mnemonicGenerate()),
+
+
+        sign:(data,privateKey)=>{
+
+            let toSign=new Uint8Array(Buffer.from(crypto.createHash('sha256').update(data).digest('hex'),'hex')),
+
+                signature=secp256k1.ecdsaSign(toSign,privateKey)
+
+            signature.signature=Buffer.from(signature.signature).toString('base64')
+
+            return signature
+                                    
+        },
+
+        verify:(data,signature,publicKey)=>
+
+            secp256k1.ecdsaVerify(
+                
+                new Uint8Array(Buffer.from(signature.signature,'base64')),
+            
+                new Uint8Array(Buffer.from(crypto.createHash('sha256').update(data).digest('hex'),'hex')),
+            
+                new Uint8Array(publicKey)
+                
+            )
 
     }
 
