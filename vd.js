@@ -72,19 +72,42 @@ T-Transfer(transfer everything you need to verify signature)
 
 
 
+import{encodeAddress,decodeAddress,mnemonicGenerate,mnemonicValidate,mnemonicToMiniSecret} from '@polkadot/util-crypto'
+
 import {crypto as bnbcrypto} from '@binance-chain/javascript-sdk'
+
 import {FilecoinSigner} from '@blitslabs/filecoin-js-signer'
-import eosjs from 'eosjs/dist/PublicKey.js'
+
 import {Keypair as StellarKeypair} from 'stellar-sdk'
+
+import eosjs from 'eosjs/dist/PublicKey.js'
+
+import {u8aToHex} from '@polkadot/util'
+
+import{Keyring}from'@polkadot/keyring'
+
 import helium from '@helium/crypto'
+
 import rip from 'ripple-keypairs'
-import Pact from 'pact-lang-api'
+
 import Arweave from 'arweave'
+
 import algosdk from 'algosdk'
+
 import nacl from 'tweetnacl'
+
 import crypto from 'crypto'
+
 import ecc from 'eosjs-ecc'
+
 import Web3 from 'web3'
+
+
+
+
+
+
+
 
 
 
@@ -385,6 +408,23 @@ export default {
             {pub:keyPair.publicKey(),prv:keyPair.secret()}
             
         )
+
+    },
+
+
+    POLKADOT:{
+
+        generate:()=>{
+
+
+
+        },
+
+        toKusama:()=>{},
+
+        toSubstrate:()=>{},
+
+        toPolkadot:()=>{},
 
     }
 
