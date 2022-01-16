@@ -72,7 +72,7 @@ T-Transfer(transfer everything you need to verify signature)
 
 
 
-import{encodeAddress,decodeAddress,mnemonicGenerate,mnemonicValidate,mnemonicToMiniSecret} from '@polkadot/util-crypto'
+import{encodeAddress,mnemonicGenerate,mnemonicToMiniSecret} from '@polkadot/util-crypto'
 
 import {crypto as bnbcrypto} from '@binance-chain/javascript-sdk'
 
@@ -82,7 +82,7 @@ import {Keypair as StellarKeypair} from 'stellar-sdk'
 
 import eosjs from 'eosjs/dist/PublicKey.js'
 
-import {u8aToHex} from '@polkadot/util'
+import MinaSDK from "@o1labs/client-sdk"
 
 import{Keyring}from'@polkadot/keyring'
 
@@ -101,7 +101,6 @@ import crypto from 'crypto'
 import ecc from 'eosjs-ecc'
 
 import Web3 from 'web3'
-
 
 
 
@@ -460,7 +459,22 @@ export default {
 
         toPolkadot:pubKey=>encodeAddress(Buffer.from(pubKey,'base64'),0),
 
+    },
+
+
+    MINA:{
+
+        generate:()=>MinaSDK.genKeys(),
+
+        sign:(data,keyPair)=>MinaSDK.signMessage(data,keyPair),
+
+        verify:signatureObj=>MinaSDK.verifyMessage(signatureObj),
+
+        derivePublicKey:privateKey=>MinaSDK.derivePublicKey(privateKey)
+
     }
+
+
 
 
 
