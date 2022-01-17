@@ -72,6 +72,7 @@ T-Transfer(transfer everything you need to verify signature)
 
 
 
+
 import{encodeAddress,mnemonicGenerate,mnemonicToMiniSecret} from '@polkadot/util-crypto'
 
 import {crypto as bnbcrypto} from '@binance-chain/javascript-sdk'
@@ -85,6 +86,8 @@ import eosjs from 'eosjs/dist/PublicKey.js'
 import {Account} from '@harmony-js/account'
 
 import MinaSDK from "@o1labs/client-sdk"
+
+import SolanaPkg from '@solana/web3.js'
 
 import ALL from '@harmony-js/crypto'
 
@@ -107,6 +110,9 @@ import crypto from 'crypto'
 import ecc from 'eosjs-ecc'
 
 import Web3 from 'web3'
+
+
+
 
 
 
@@ -522,7 +528,7 @@ export default {
             signature.signature=Buffer.from(signature.signature).toString('base64')
 
             return signature
-                                    
+
         },
 
         verify:(data,signature,publicKey)=>
@@ -537,7 +543,68 @@ export default {
                 
             )
 
-    }
+    },
+
+
+
+
+    SOLANA:{
+
+        generate:()=>{
+
+            let {publicKey,secretKey}=SolanaPkg.Keypair.generate()
+
+            //export in BASE64 format
+            return {
+                        publicKey:Buffer.from(publicKey.toBytes()).toString('base64'),
+                        
+                        privateKey:Buffer.from(secretKey).toString('base64')
+                    
+                    }
+
+        },
+
+        //Signature in exportable form
+        sign:(data,privateKey)=>
+        
+            Buffer.from(
+
+                nacl.sign.detached(
+                    
+                    new Uint8Array(Buffer.from(data,'utf-8')),
+                    new Uint8Array(Buffer.from(privateKey,'base64'))
+                    
+                )
+
+            ).toString('base64'),
+
+
+
+
+        
+        verify:(data,signature,pubKey)=>
+            
+            nacl.sign.detached.verify(
+                
+                new Uint8Array(Buffer.from(data,'utf-8')),
+                new Uint8Array(Buffer.from(signature,'base64')),
+                new Uint8Array(Buffer.from(pubKey,'base64'))
+            
+            ),
+
+
+        getAddress:pubKey=>
+        
+            new SolanaPkg.Keypair(
+                
+                {publicKey:new Uint8Array(Buffer.from(pubKey,'base64'))}
+            
+            ).publicKey.toBase58(),
+
+        
+        
+
+    },
 
 
 }
