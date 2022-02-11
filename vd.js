@@ -75,33 +75,37 @@ T-Transfer(transfer everything you need to verify signature)
 
 import{encodeAddress,mnemonicGenerate,mnemonicToMiniSecret} from '@polkadot/util-crypto'
 
-import {crypto as bnbcrypto} from '@binance-chain/javascript-sdk'
+import {crypto as BnbCrypto} from '@binance-chain/javascript-sdk'
 
 import {FilecoinSigner} from '@blitslabs/filecoin-js-signer'
 
 import {Keypair as StellarKeypair} from 'stellar-sdk'
 
-import eosjs from 'eosjs/dist/PublicKey.js'
+import EosJS from 'eosjs/dist/PublicKey.js'
 
 import {Account} from '@harmony-js/account'
 
-import MinaSDK from "@o1labs/client-sdk"
+import RippleKeys from 'ripple-keypairs'
 
-import SolanaPkg from '@solana/web3.js'
+import MinaSDK from '@o1labs/client-sdk'
 
-import ALL from '@harmony-js/crypto'
+import Tendermint from '@tendermint/sig'
 
-import helium from '@helium/crypto'
+import Harmony from '@harmony-js/crypto'
 
-import rip from 'ripple-keypairs'
+import SolanaWeb3 from '@solana/web3.js'
+
+import Zil from '@zilliqa-js/crypto'
+
+import Helium from '@helium/crypto'
 
 import secp256k1 from 'secp256k1'
 
-import pac from '@tendermint/sig'
-
 import Arweave from 'arweave'
 
-import algosdk from 'algosdk'
+import AlgoSDK from 'algosdk'
+
+import Base58 from 'base-58'
 
 import nacl from 'tweetnacl'
 
@@ -118,11 +122,7 @@ import Web3 from 'web3'
 
 
 
-
-
-
-
-let { Keypair:HeliumKeypair , Address } = helium,
+let {Keypair:HeliumKeypair,Address} = Helium,
 
     filecoin_signer = new FilecoinSigner(),
     
@@ -130,7 +130,7 @@ let { Keypair:HeliumKeypair , Address } = helium,
 
     arweave = Arweave.init({}),
 
-    {createWalletFromMnemonic} = pac
+    {createWalletFromMnemonic} = Tendermint
 
 
 
@@ -139,30 +139,9 @@ export default {
 
 
 
-    
-    // XPR GSVDT scheme
-    XRP:{
-
-        generate:seedOptions=>{
-            
-            let seed=rip.generateSeed(seedOptions),
-                
-                keyPair=rip.deriveKeypair(seed)
-
-            return {seed,keyPair,address:rip.deriveAddress(keyPair.publicKey)}
-
-        },
-
-        sign:(stringData,privateKey)=>rip.sign(stringData,privateKey),
-
-        verify:(plainText,signature,publicKey)=>rip.verify(plainText,signature,publicKey)
-
-    },
-
-
-
 
     //KLYNTAR native format
+    //RFC8410 Ed25519 keypair
     KLYNTAR:{
 
 
@@ -170,13 +149,29 @@ export default {
 
             crypto.generateKeyPair('ed25519',{
                 
-                namedCurve: 'secp256k1',
-                publicKeyEncoding: {type: 'spki',format: 'der'},
-                privateKeyEncoding: {type: 'pkcs8',format: 'der'}
+                publicKeyEncoding: {type:'spki',format:'der'},
+                privateKeyEncoding: {type:'pkcs8',format:'der'}
              
-            },(err, publicKey, privateKey)=>err?reject(false):resolve({pub:publicKey.toString('base64').slice(16),prv:privateKey.toString('base64')}))
-        
-        }).catch(e=>false),
+            },(err,publicKey,privateKey)=>
+            
+                err
+                ?
+                reject(false)
+                :
+                resolve(
+                  {
+          
+                    publicKey:Base58.encode(publicKey).slice(16),//if hex(Common-302a300506032b6570032100) slice(16) if base64(Common-MCowBQYDK2VwAyEA)  GfHq2tTVk9z4eXgy-for BASE58
+          
+                    privateKey:privateKey.toString('base64')//if hex(Common-302e020100300506032b657004220420) slice(21) if base64(Common-MC4CAQAwBQYDK2VwBCIEI)
+                  
+                  }
+                
+                )
+            
+              )
+          
+          }).catch(e=>false),
 
 
 
@@ -195,13 +190,36 @@ export default {
         verify:(data,signature,pubKey)=>new Promise((resolve,reject)=>
 
             //Add mandatory prefix and postfix to pubkey
-            crypto.verify(null,data,'-----BEGIN PUBLIC KEY-----\n'+'MCowBQYDK2VwAyEA'+pubKey+'\n-----END PUBLIC KEY-----',Buffer.from(signature,'base64'),(e,res)=>
-        
-                e?reject(false):resolve(res)
-        
+            crypto.verify(null,data,'-----BEGIN PUBLIC KEY-----\n'+Buffer.from(Base58.decode('GfHq2tTVk9z4eXgy'+pubKey)).toString('base64')+'\n-----END PUBLIC KEY-----',Buffer.from(signature,'base64'),(err,res)=>
+    
+                err?reject(false):resolve(res)
+    
             )
-       
-       ).catch(e=>false)
+    
+        ).catch(e=>false)
+    
+
+    },
+
+    
+
+
+    // XPR GSVDT scheme
+    XRP:{
+
+        generate:seedOptions=>{
+            
+            let seed=RippleKeys.generateSeed(seedOptions),
+                
+                keyPair=RippleKeys.deriveKeypair(seed)
+
+            return {seed,keyPair,address:RippleKeys.deriveAddress(keyPair.publicKey)}
+
+        },
+
+        sign:(stringData,privateKey)=>RippleKeys.sign(stringData,privateKey),
+
+        verify:(plainText,signature,publicKey)=>RippleKeys.verify(plainText,signature,publicKey)
 
     },
 
@@ -233,17 +251,17 @@ export default {
 
         generate:()=>{
             
-            let acc=algosdk.generateAccount()
+            let acc=AlgoSDK.generateAccount()
 
-            return {acc,mnemonic:algosdk.secretKeyToMnemonic(acc.sk)}
+            return {acc,mnemonic:AlgoSDK.secretKeyToMnemonic(acc.sk)}
         
         },
         
-        sign:(data,privateKey)=>Buffer.from(algosdk.signBytes(Buffer.from(data),privateKey)).toString('base64'),
+        sign:(data,privateKey)=>Buffer.from(AlgoSDK.signBytes(Buffer.from(data),privateKey)).toString('base64'),
         
-        verify:(data,signature,address)=>algosdk.verifyBytes(Buffer.from(data),Buffer.from(signature,'base64'),address),
+        verify:(data,signature,address)=>AlgoSDK.verifyBytes(Buffer.from(data),Buffer.from(signature,'base64'),address),
         
-        deriveAccFromMnemonic:phrase=>algosdk.mnemonicToSecretKey(phrase)
+        deriveAccFromMnemonic:phrase=>AlgoSDK.mnemonicToSecretKey(phrase)
 
     },
 
@@ -293,17 +311,17 @@ export default {
     BINANCE_CHAIN:{
 
 
-        generateMnemonic:()=>bnbcrypto.generateMnemonic(),
+        generateMnemonic:()=>BnbCrypto.generateMnemonic(),
 
         generate:mnemonic=>{
             
             // generate key entropy
-            let privateKey = mnemonic ? bnbcrypto.getPrivateKeyFromMnemonic(mnemonic) : bnbcrypto.generatePrivateKey(),
+            let privateKey = mnemonic ? BnbCrypto.getPrivateKeyFromMnemonic(mnemonic) : BnbCrypto.generatePrivateKey(),
     
                 // get an address
-                address = bnbcrypto.getAddressFromPrivateKey(privateKey,'bnb'),
+                address = BnbCrypto.getAddressFromPrivateKey(privateKey,'bnb'),
 
-                publicKey = bnbcrypto.getPublicKeyFromPrivateKey(privateKey)
+                publicKey = BnbCrypto.getPublicKeyFromPrivateKey(privateKey)
         
 
             return {privateKey,address,publicKey}    
@@ -312,10 +330,10 @@ export default {
 
 
 
-        sign:(data,privateKey)=>Buffer.from(bnbcrypto.generateSignature(data,privateKey)).toString('base64'),
+        sign:(data,privateKey)=>Buffer.from(BnbCrypto.generateSignature(data,privateKey)).toString('base64'),
 
 
-        verify:(data,signature,pubKey)=>bnbcrypto.verifySignature(Buffer.from(signature,'base64'),data,pubKey),
+        verify:(data,signature,pubKey)=>BnbCrypto.verifySignature(Buffer.from(signature,'base64'),data,pubKey),
 
 
         deriveFromMnemonic:mnemonic=>{
@@ -343,9 +361,9 @@ export default {
 
         verify:(data,signature,address)=>ecc.verify(signature,data,address),
 
-        toPUB_K1:EOSaddress=>eosjs.PublicKey.fromString(EOSaddress).toString(),
+        toPUB_K1:EOSaddress=>EosJS.PublicKey.fromString(EOSaddress).toString(),
 
-        toLegacy:PUB_K1address=>eosjs.PublicKey.fromString(PUB_K1address).toLegacyString()
+        toLegacy:PUB_K1address=>EosJS.PublicKey.fromString(PUB_K1address).toLegacyString()
 
     },
 
@@ -500,13 +518,13 @@ export default {
         },
 
 
-        sign:(data,privateKey)=>ALL.sign(`0x${Buffer.from(data,'utf-8').toString('hex')}`,privateKey),
+        sign:(data,privateKey)=>Harmony.sign(`0x${Buffer.from(data,'utf-8').toString('hex')}`,privateKey),
 
 
-        verify:(data,signature,pubKey)=>ALL.verifySignature(`0x${Buffer.from(data,'utf-8').toString('hex')}`,signature,pubKey),
+        verify:(data,signature,pubKey)=>Harmony.verifySignature(`0x${Buffer.from(data,'utf-8').toString('hex')}`,signature,pubKey),
 
 
-        toHarmonyFormat:address=>ALL.toBech32(address)
+        toHarmonyFormat:address=>Harmony.toBech32(address)
 
 
 
@@ -552,7 +570,7 @@ export default {
 
         generate:()=>{
 
-            let {publicKey,secretKey}=SolanaPkg.Keypair.generate()
+            let {publicKey,secretKey}=SolanaWeb3.Keypair.generate()
 
             //export in BASE64 format
             return {
@@ -595,7 +613,7 @@ export default {
 
         getAddress:pubKey=>
         
-            new SolanaPkg.Keypair(
+            new SolanaWeb3.Keypair(
                 
                 {publicKey:new Uint8Array(Buffer.from(pubKey,'base64'))}
             
@@ -605,6 +623,17 @@ export default {
         
 
     },
+
+
+    ZILLIQA:{
+
+        // generate:()=>Zil.getAccountFrom0xPrivateKey(Zil.randomBytes(32)),
+
+        // sign:(data,privateKey,pubKey)=>Zil.sign(Buffer.from(data,'utf-8'),privateKey,pubKey),
+
+        // verify:(data,signature,publicKey)
+
+    }
 
 
 }
