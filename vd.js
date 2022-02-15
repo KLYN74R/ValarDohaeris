@@ -141,7 +141,7 @@ export default {
 
 
     //KLYNTAR native format
-    //RFC8410 Ed25519 keypair
+    //RFC8410 Ed25519 keypair with base58 encoded pubkey as address and 64 bytes base64 encoded signature
     KLYNTAR:{
 
 
@@ -205,6 +205,7 @@ export default {
 
 
     // XPR GSVDT scheme
+    //ECDSA (secp256k1 curve) and ED25519
     XRP:{
 
         generate:seedOptions=>{
@@ -228,6 +229,7 @@ export default {
 
     //For EVM chains which supports such format
     //!Change output data(minimization)
+    //ECDSA (secp256k1 curve) with 32 bytes private key
     ETH_LIKE:{
 
         generate:()=>{
@@ -246,7 +248,7 @@ export default {
 
 
 
-
+    //Ed25519
     ALGORAND:{
 
         generate:()=>{
@@ -267,7 +269,7 @@ export default {
 
 
 
-    
+    //ECDSA (secp256k1 curve)
     FILECOIN:{
 
         generate:async(mnemonicBitsStrength,network,derivationPath=`m/44'/461'/0'/0/0`)=>{
@@ -307,7 +309,7 @@ export default {
 
 
 
-
+    //ECDSA (secp256k1 curve)
     BINANCE_CHAIN:{
 
 
@@ -352,7 +354,7 @@ export default {
 
 
 
-
+    //ECDSA k1 and r1 curves
     EOS:{
         
         generate:()=>ecc.randomKey().then(privateKey=>({privateKey,address:ecc.privateToPublic(privateKey)})),
@@ -422,7 +424,7 @@ export default {
 
 
 
-
+    //Ed25519
     STELLAR:{
 
         generate:()=>StellarKeypair.random(),
@@ -450,7 +452,7 @@ export default {
 
 
 
-
+    //Ed25519,ECDSA(secp256k1) and other (doesn't matter here)
     POLKADOT:{
 
         generate:(mnemonic=mnemonicGenerate())=>{
