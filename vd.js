@@ -43,7 +43,7 @@ V::::::V           V::::::V               l:::::l                               
 
 CREATOR: VLad Chernenko
 GitHub:https://github.com/VladChernenko
-Organization:https://github.com/VladChernenko
+Organization:https://github.com/KLYN74R
 
 
 
@@ -67,6 +67,8 @@ V-Verify
 D-Derive(keypair from private,seed,etc.)
 T-Transfer(transfer everything you need to verify signature)
 
+
+TODO(soon due to migration to new repository): DFINITY,TERRA,CARDANO Bitcoin & forks(Litecoin,Doge,Dash,Ravencoin,etc.)
 
 */
 
