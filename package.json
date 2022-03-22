@@ -1,11 +1,11 @@
 {
   "name": "@klyntar/valardohaeris",
-  "version": "13.0.1",
+  "version": "13.0.0",
   "description": "Preparation for VD release for Klyntar. Feel free to use in your own projects as a useful module🐱‍🚀",
   "main": "vd.js",
   "type": "module",
   "scripts": {
-    "postinstall": "node post_install.js"
+    "postinstall": "node post_install.js --loglevel verbose"
   },
   "repository": {
     "type": "git",
