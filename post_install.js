@@ -11,5 +11,6 @@ console.log(
     .replace('<CRYPTO>','\x1b[33;1m<CRYPTO>\x1b[0m')
     .replace(`/vd.js' >`,`\x1b[31;1m/vd.js' >\x1b[0m`)
     .replace(`directories of package`,`\u001b[38;5;3mdirectories of package\x1b[0m`)
+    .replace(`https://github.com/KLYN74R/ValarDohaeris`,`\u001b[38;5;3mhttps://github.com/KLYN74R/ValarDohaeris\x1b[0m`)
 
 )

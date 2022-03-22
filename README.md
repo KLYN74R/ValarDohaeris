@@ -8,7 +8,10 @@
 
 ```js
 
-import VD from '@klyntar/valardohaeris'
+
+//CRYPTO is klyntar,algorand,arweave,eos,eth_like,filecoin,harmony,helium,mina,polkadot,ripple,solana,stellar,zilliqa(unimplemented)
+
+import VD from '@klyntar/valardohaeris/<CRYPTO>/vd.js'
 
 
 //_______________________________ USE DEFAULT SETS OF FUNCTIONS _______________________________
