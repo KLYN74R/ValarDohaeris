@@ -5,7 +5,7 @@
   "main": "vd.js",
   "type": "module",
   "scripts": {
-    "test": ""
+    "postinstall":"node post_install.js"
   },
   "repository": {
     "type": "git",
