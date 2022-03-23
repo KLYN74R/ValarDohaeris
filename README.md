@@ -10,6 +10,7 @@
 
 
 //CRYPTO is klyntar,algorand,arweave,eos,eth_like,filecoin,harmony,helium,mina,polkadot,ripple,solana,stellar,zilliqa(unimplemented)
+//TIP: Check the directories of package to get available formats or https://github.com/KLYN74R/ValarDohaeris
 
 import VD from '@klyntar/valardohaeris/<CRYPTO>/vd.js'
 
