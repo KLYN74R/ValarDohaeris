@@ -18,26 +18,26 @@ import VD from '@klyntar/valardohaeris/<CRYPTO>/vd.js'
 //_______________________________ USE DEFAULT SETS OF FUNCTIONS _______________________________
 
 
-let keys=await VD.EOS.generate()
+let keys=await VD.generate()
 
 console.log(keys)//Make sure format is OK
 
 //Sign data in the string format
 let data='SIGN ME',
 
-    signature=VD.EOS.sign(data,keys.privateKey)
+    signature=VD.sign(data,keys.privateKey)
 
 console.log('Your signature in transportable format => ',signature)
 
-console.log('Is ok => ',VD.EOS.verify('ANOTHER DATA',signature,keys.address),` (should be ❌)`)
+console.log('Is ok => ',VD.verify('ANOTHER DATA',signature,keys.address),` (should be ❌)`)
 
-console.log('Is ok => ',VD.EOS.verify(data,signature,keys.address),'(should be ✔️)')
+console.log('Is ok => ',VD.verify(data,signature,keys.address),'(should be ✔️)')
 
 
 
 //_______________________________ AND EXPLORE SPECIFIC FUNCTIONS _______________________________
 
-console.log('Address in another format: ',VD.EOS.toPUB_K1(keys.address))
+console.log('Address in another format: ',VD.toPUB_K1(keys.address))
 
 
 ```
