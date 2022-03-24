@@ -71,3 +71,7 @@ T-Transfer(transfer everything you need to verify signature)
 TODO(soon due to migration to new repository): DFINITY,TERRA,CARDANO Bitcoin & forks(Litecoin,Doge,Dash,Ravencoin,etc.)
 
 */
+
+
+
+export let SUPPORTED_FORMATS=['KLY','ALGO','AR','BC','BTC','ATOM','EOS','ETH','FIL','ONE','HNT','MINA','XRP','SOL','XML','ZIL']
