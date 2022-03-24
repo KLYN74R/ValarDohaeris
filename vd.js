@@ -74,4 +74,4 @@ TODO(soon due to migration to new repository): DFINITY,TERRA,CARDANO Bitcoin & f
 
 
 
-export let SUPPORTED_FORMATS=['KLY','ALGO','AR','BC','BTC','ATOM','EOS','ETH','FIL','ONE','HNT','MINA','XRP','SOL','XML','ZIL']
+export let SUPPORTED_FORMATS=['klyntar','algorand','arweave','binance_chain','bitcoin','cosmos','eos','eth_like','filecoin','polkadot','harmony','helium','mina','xrp','solana','stellar','zilliqa']
