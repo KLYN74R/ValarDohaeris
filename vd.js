@@ -67,11 +67,8 @@ V-Verify
 D-Derive(keypair from private,seed,etc.)
 T-Transfer(transfer everything you need to verify signature)
 
-
-TODO(soon due to migration to new repository): DFINITY,TERRA,CARDANO Bitcoin & forks(Litecoin,Doge,Dash,Ravencoin,etc.)
-
 */
 
 
 
-export let SUPPORTED_FORMATS=['klyntar','algorand','arweave','binance_chain','bitcoin','cosmos','eos','eth_like','filecoin','polkadot','harmony','helium','mina','xrp','solana','stellar','zilliqa']
+export let SUPPORTED_FORMATS=['klyntar','algorand','arweave','binance_chain','bitcoin','cosmos','eos','eth_like','filecoin','polkadot','harmony','helium','mina','xrp','solana','stellar','zilliqa','terra']

@@ -25,13 +25,13 @@ console.log(keys)//Make sure format is OK
 //Sign data in the string format
 let data='SIGN ME',
 
-    signature=VD.sign(data,keys.privateKey)
+    signature=await VD.sign(data,keys.privateKey)
 
 console.log('Your signature in transportable format => ',signature)
 
-console.log('Is ok => ',VD.verify('ANOTHER DATA',signature,keys.address),` (should be ❌)`)
+console.log('Is ok => ',await VD.verify('ANOTHER DATA',signature,keys.address),` (should be ❌)`)
 
-console.log('Is ok => ',VD.verify(data,signature,keys.address),'(should be ✔️)')
+console.log('Is ok => ',await VD.verify(data,signature,keys.address),'(should be ✔️)')
 
 
 
