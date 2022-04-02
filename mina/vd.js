@@ -1,16 +1,34 @@
-import MinaSDK from '@o1labs/client-sdk'
+import Client from "mina-signer"
 
+const client = new Client({ network:"mainnet"})
 
 
 export default {
 
 
-    generate:()=>MinaSDK.genKeys(),
+    generate:()=>client.genKeys(),
 
-    sign:(data,keyPair)=>MinaSDK.signMessage(data,keyPair),
+    sign:(data,keyPair)=>{
+    
+        let unoptimizedSigna=client.signMessage(data,keyPair)
 
-    verify:signatureObj=>MinaSDK.verifyMessage(signatureObj),
+        return unoptimizedSigna.signature.signature
+    
+    },
 
-    derivePublicKey:privateKey=>MinaSDK.derivePublicKey(privateKey)
+    verify:(string,signature,signer)=>{
+
+        let deriveSig={
+
+            signature:{string,signer,signature},
+            
+            data:{publicKey:signer, message:string}
+        
+        }
+
+        return client.verifyMessage(deriveSig)
+
+    }
+
 
 }
