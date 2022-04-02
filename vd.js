@@ -71,4 +71,10 @@ T-Transfer(transfer everything you need to verify signature)
 
 
 
-export let SUPPORTED_FORMATS=['klyntar','algorand','arweave','binance_chain','bitcoin','cosmos','eos','eth_like','filecoin','polkadot','harmony','helium','mina','xrp','solana','stellar','zilliqa','terra','dfinity(icp)']
+export let SUPPORTED_FORMATS=[
+    
+    'klyntar','algorand','arweave','binance_chain','bitcoin','cosmos','eos','eth_like','filecoin',
+    
+    'polkadot','harmony','helium','mina','xrp','solana','stellar','zilliqa','terra','dfinity'
+
+]
