@@ -1,6 +1,6 @@
 {
   "name": "@klyntar/valardohaeris",
-  "version": "15.1.0",
+  "version": "15.1.1",
   "description": "Preparation for VD release for Klyntar. Feel free to use in your own projects as a useful module🐱‍🚀",
   "main": "vd.js",
   "type": "module",
@@ -37,7 +37,8 @@
     "solana",
     "algorand",
     "ripple",
-    "stellar"
+    "stellar",
+    "tezos","dfinity","icp","mina"
   ],
   "author": "KlyntarTeam,VladChernenko",
   "license": "Apache-2.0",

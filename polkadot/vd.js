@@ -13,7 +13,17 @@ export default {
 
             {publicKey,secretKey} = nacl.sign.keyPair.fromSeed(seed)
 
-        return {seed:Buffer.from(seed).toString('base64'), publicKey:Buffer.from(publicKey).toString('base64'), secretKey:Buffer.from(secretKey).toString('base64')}
+        return {
+            
+            seed:Buffer.from(seed).toString('base64'),
+ 
+            publicKey:Buffer.from(publicKey).toString('base64'),
+ 
+            secretKey:Buffer.from(secretKey).toString('base64'),
+ 
+            address:encodeAddress(publicKey,0)
+        
+        }
 
     },
 
