@@ -1,7 +1,8 @@
 import{encodeAddress} from '@polkadot/util-crypto'
 
 
-//Ed25519,ECDSA(secp256k1) and other (doesn't matter here)
+//Ed25519(native)
+//Signature is base64 encoded
 export default{
 
     generate:()=>new Promise((resolve,reject)=>{
@@ -21,13 +22,13 @@ export default{
     
                 privateKey=privateKey.toString('hex')       
     
-                resolve({polkaAddress:encodeAddress(publicKey),privateKey})
+                resolve({polkaAddress:encodeAddress(publicKey),publicKey,privateKey})
     
             }
     
         })
     
-    }).catch(e=>false),
+    }).catch(_e=>false),
 
 
     sign:(data,hexPrivateKey)=>new Promise((resolve,reject)=>
@@ -38,7 +39,7 @@ export default{
 
         )
 
-    ).catch(e=>''),
+    ).catch(_e=>''),
 
        
 
@@ -51,13 +52,13 @@ export default{
 
         )
     
-    ).catch(e=>false),
+    ).catch(_e=>false),
 
 
-    toKusama:pubKey=>encodeAddress(Buffer.from(pubKey,'base64'),2),
+    toKusama:rawPubKey=>encodeAddress(rawPubKey,2),
 
-    toSubstrate:pubKey=>encodeAddress(Buffer.from(pubKey,'base64'),42),
+    toSubstrate:rawPubKey=>encodeAddress(rawPubKey,42),
 
-    toPolkadot:pubKey=>encodeAddress(Buffer.from(pubKey,'base64'),0),
+    toPolkadot:rawPubKey=>encodeAddress(rawPubKey,0)
 
 }
