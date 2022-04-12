@@ -22,7 +22,7 @@ export default{
     
                 privateKey=privateKey.toString('hex')       
     
-                resolve({polkaAddress:encodeAddress(publicKey),publicKey,privateKey})
+                resolve({polkaAddress:encodeAddress(publicKey),publicKey:publicKey.toString('hex'),privateKey})
     
             }
     
@@ -55,10 +55,10 @@ export default{
     ).catch(_e=>false),
 
 
-    toKusama:rawPubKey=>encodeAddress(rawPubKey,2),
+    toKusama:hexPubKey=>encodeAddress(Buffer.from(hexPubKey,'hex'),2),
 
-    toSubstrate:rawPubKey=>encodeAddress(rawPubKey,42),
+    toSubstrate:hexPubKey=>encodeAddress(Buffer.from(hexPubKey,'hex'),42),
 
-    toPolkadot:rawPubKey=>encodeAddress(rawPubKey,0)
+    toPolkadot:hexPubKey=>encodeAddress(Buffer.from(hexPubKey,'hex'),0),
 
 }
