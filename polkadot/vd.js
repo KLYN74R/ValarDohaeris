@@ -5,7 +5,7 @@ import{encodeAddress} from '@polkadot/util-crypto'
 //Signature is base64 encoded
 export default{
 
-    generate:()=>new Promise((resolve,reject)=>{
+    generate:(ss58Format=0)=>new Promise((resolve,reject)=>{
         
         crypto.generateKeyPair('ed25519',{
             
@@ -22,7 +22,7 @@ export default{
     
                 privateKey=privateKey.toString('hex')       
     
-                resolve({polkaAddress:encodeAddress(publicKey),publicKey:publicKey.toString('hex'),privateKey})
+                resolve({polkaAddress:encodeAddress(publicKey,ss58Format),publicKey:publicKey.toString('hex'),privateKey})
     
             }
     
@@ -43,10 +43,10 @@ export default{
 
        
 
-    verify:(data,signature,polkaAddress)=>new Promise((resolve,reject)=>
+    verify:(data,signature,polkaAddress,ss58Format=0)=>new Promise((resolve,reject)=>
        
         //Add mandatory prefix and postfix to pubkey
-        crypto.verify(null,data,'-----BEGIN PUBLIC KEY-----\n'+Buffer.concat([Buffer.from('302a300506032b6570032100','hex'),decodeAddress(polkaAddress,0)]).toString('base64')+'\n-----END PUBLIC KEY-----',Buffer.from(signature,'base64'),(err,res)=>
+        crypto.verify(null,data,'-----BEGIN PUBLIC KEY-----\n'+Buffer.concat([Buffer.from('302a300506032b6570032100','hex'),decodeAddress(polkaAddress,ss58Format)]).toString('base64')+'\n-----END PUBLIC KEY-----',Buffer.from(signature,'base64'),(err,res)=>
 
             err?reject(false):resolve(res)
 
