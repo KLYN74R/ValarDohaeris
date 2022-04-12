@@ -38,7 +38,10 @@
     "algorand",
     "ripple",
     "stellar",
-    "tezos","dfinity","icp","mina"
+    "tezos",
+    "dfinity",
+    "icp",
+    "mina"
   ],
   "author": "KlyntarTeam,VladChernenko",
   "license": "Apache-2.0",
@@ -54,7 +57,6 @@
     "@harmony-js/crypto": "^0.1.56",
     "@helium/crypto": "^3.45.0",
     "@polkadot/util-crypto": "^8.3.1",
-    "@solana/web3.js": "^1.31.0",
     "@tendermint/sig": "^0.6.0",
     "@terra-money/terra.js": "^3.0.8",
     "@zilliqa-js/crypto": "^3.3.4",
