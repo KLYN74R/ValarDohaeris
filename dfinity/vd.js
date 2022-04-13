@@ -1,68 +1,62 @@
-import nacl from 'tweetnacl'
-
-import {
-    
-    key_new,
-    key_to_pub_key,
-    pub_key_to_address,
-    address_to_hex
-
-} from '@dfinity/rosetta-client'
-
+import crypto from 'crypto'
 
 
 
 export default {
 
 
-    generate:seed=>{
-
-        //Derive an ED25519 private key from a system random seed. The private key's .Type is Buffer.
-        let privateKey = seed ? key_new(Buffer.from(seed,'base64')) : key_new(),
-
-            publicKey = key_to_pub_key(privateKey)
-
-
-        return {
-
-            privateKey:privateKey.toString('hex'),
-            
-            publicKey:publicKey.toString('hex'),
-
-            address:address_to_hex(pub_key_to_address(publicKey))
-
-        }
-
-    },
-
-    sign:(data,privateKey)=>{
-    
-        let message=new Uint8Array(Buffer.from(data,'utf-8'))
+    generate:()=>new Promise((resolve,reject)=>{
         
-        return Buffer.from(
+        crypto.generateKeyPair('ed25519',{
             
-            nacl.sign.detached(
-                
-                message,new Uint8Array(Buffer.from(privateKey,'hex'))
-                
+            publicKeyEncoding: {type:'spki',format:'der'},
+            privateKeyEncoding: {type:'pkcs8',format:'der'}
+         
+        },(err,publicKey,privateKey)=>
+        
+            err
+            ?
+            reject(false)
+            :
+            resolve(
+              {
+      
+                address:publicKey.slice(12).toString('hex'),
+      
+                privateKey:privateKey.toString('base64')
+              
+              }
+            
             )
-            
-        ).toString('base64')
+        
+          )
+      
+    }).catch(e=>false),
+
+
+
+    sign:(data,privateKey)=>new Promise((resolve,reject)=>
+        
+        crypto.sign(null,Buffer.from(data),'-----BEGIN PRIVATE KEY-----\n'+privateKey+'\n-----END PRIVATE KEY-----',(e,sig)=>
     
-    },
+            e?reject(''):resolve(sig.toString('base64'))
 
-    verify:(data,signature,pubKey)=>{
-
-        return nacl.sign.detached.verify(
-            
-            new Uint8Array(Buffer.from(data,'utf-8')),
-            
-            new Uint8Array(Buffer.from(signature,'base64')),
-            
-            new Uint8Array(Buffer.from(pubKey,'hex'))
-            
         )
-   
-    }
+
+    ).catch(e=>''),
+
+       
+
+    verify:(data,signature,address)=>new Promise((resolve,reject)=>
+       
+        //Add mandatory prefix and postfix to pubkey
+        crypto.verify(null,data,'-----BEGIN PUBLIC KEY-----\n'+Buffer.from('302a300506032b6570032100'+address,'hex').toString('base64')+'\n-----END PUBLIC KEY-----',Buffer.from(signature,'base64'),(err,res)=>
+
+            err?reject(false):resolve(res)
+
+        )
+
+    ).catch(e=>false)
+    
 
 }
