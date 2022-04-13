@@ -1,4 +1,6 @@
-import{encodeAddress} from '@polkadot/util-crypto'
+import{encodeAddress,decodeAddress} from '@polkadot/util-crypto'
+import crypto from 'crypto'
+
 
 
 //Ed25519(native)
@@ -20,9 +22,9 @@ export default{
     
                 publicKey=new Uint8Array(publicKey.slice(12))//if hex(Common-302a300506032b6570032100) slice(16) if base64(Common-MCowBQYDK2VwAyEA)  GfHq2tTVk9z4eXgy-for BASE58
     
-                privateKey=privateKey.toString('hex')       
+                privateKey=privateKey.toString('base64')       
     
-                resolve({polkaAddress:encodeAddress(publicKey,ss58Format),publicKey:publicKey.toString('hex'),privateKey})
+                resolve({polkaAddress:encodeAddress(publicKey,ss58Format),publicKey:Buffer.from(publicKey).toString('hex'),privateKey})
     
             }
     
@@ -31,9 +33,9 @@ export default{
     }).catch(_e=>false),
 
 
-    sign:(data,hexPrivateKey)=>new Promise((resolve,reject)=>
+    sign:(data,privateKey)=>new Promise((resolve,reject)=>
         
-        crypto.sign(null,Buffer.from(data),'-----BEGIN PRIVATE KEY-----\n'+Buffer.from(hexPrivateKey,'hex').toString('base64')+'\n-----END PRIVATE KEY-----',(e,sig)=>
+        crypto.sign(null,Buffer.from(data),'-----BEGIN PRIVATE KEY-----\n'+privateKey+'\n-----END PRIVATE KEY-----',(e,sig)=>
     
             e?reject(''):resolve(sig.toString('base64'))
 
