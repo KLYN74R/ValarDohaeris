@@ -8,7 +8,7 @@ export default {
 
     generateMnemonic:()=>BnbCrypto.generateMnemonic(),
 
-        generate:mnemonic=>{
+    generate:mnemonic=>{
             
         // generate key entropy
         let privateKey = mnemonic ? BnbCrypto.getPrivateKeyFromMnemonic(mnemonic) : BnbCrypto.generatePrivateKey(),

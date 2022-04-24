@@ -15,13 +15,13 @@ const PACK = pkg;
 // }
 
 
-// let keys=await generate()
-// console.log(keys)
+let keys=await PACK.cryptoUtils.generate()
+console.log(keys)
 
-// console.log()
+console.log()
 
-// let signa=await PACK.cryptoUtils.sign('Data',keys.sk)
+let signa=await PACK.cryptoUtils.sign('Data',keys.sk)
 
-// console.log(signa)
+console.log(signa)
 
-// console.log(await PACK.verify(signa.sbytes,signa.sig,keys.pk))
+console.log(await PACK.verify(signa.sbytes,signa.sig,keys.pk))

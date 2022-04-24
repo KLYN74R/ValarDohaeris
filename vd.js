@@ -75,6 +75,6 @@ export let SUPPORTED_FORMATS=[
     
     'klyntar','algorand','arweave','binance_chain','bitcoin','cosmos','eos','eth_like','filecoin',
     
-    'polkadot','harmony','helium','mina','xrp','solana','stellar','zilliqa','terra','dfinity', 'kusama', 'substrate format'
+    'polkadot','harmony','helium','mina','xrp','solana','stellar','zilliqa','terra','dfinity', 'kusama', 'substrate format', 'ton'
 
 ]

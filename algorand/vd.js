@@ -9,13 +9,15 @@ export default {
 
     generate:()=>{
             
-        let acc=AlgoSDK.generateAccount()
+        let acc=AlgoSDK.generateAccount(),temp=acc.sk
 
-        return {acc,mnemonic:AlgoSDK.secretKeyToMnemonic(acc.sk)}
+        acc.sk=Buffer.from(acc.sk).toString('hex')
+
+        return {acc,mnemonic:AlgoSDK.secretKeyToMnemonic(temp)}
     
     },
     
-    sign:(data,privateKey)=>Buffer.from(AlgoSDK.signBytes(Buffer.from(data),privateKey)).toString('base64'),
+    sign:(data,privateKey)=>Buffer.from(AlgoSDK.signBytes(Buffer.from(data),Buffer.from(privateKey,'hex'))).toString('base64'),
     
     verify:(data,signature,address)=>AlgoSDK.verifyBytes(Buffer.from(data),Buffer.from(signature,'base64'),address),
     

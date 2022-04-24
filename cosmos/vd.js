@@ -15,15 +15,20 @@ let {createWalletFromMnemonic} = Tendermint
 export default {
 
 
+    generate:()=>{
+        
+        let acc=createWalletFromMnemonic(mnemonicGenerate())
 
-    generate:()=>createWalletFromMnemonic(mnemonicGenerate()),
+        return {privatekey:Buffer.from(acc.privateKey).toString('hex'),publicKey:Buffer.from(acc.publicKey).toString('hex')}
+
+    },
 
 
     sign:(data,privateKey)=>{
 
         let toSign=new Uint8Array(Buffer.from(crypto.createHash('sha256').update(data).digest('hex'),'hex')),
 
-            signature=secp256k1.ecdsaSign(toSign,privateKey)
+            signature=secp256k1.ecdsaSign(toSign,new Uint8Array(Buffer.from(privateKey,'hex')))
 
         signature.signature=Buffer.from(signature.signature).toString('base64')
 
@@ -39,7 +44,7 @@ export default {
         
             new Uint8Array(Buffer.from(crypto.createHash('sha256').update(data).digest('hex'),'hex')),
         
-            new Uint8Array(publicKey)
+            new Uint8Array(new Uint8Array(Buffer.from(publicKey,'hex')))
             
         )
 

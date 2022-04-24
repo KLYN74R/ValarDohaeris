@@ -1,6 +1,6 @@
 import Client from "mina-signer"
 
-const client = new Client({ network:"mainnet"})
+const client = new Client({network:"mainnet"})
 
 
 export default {

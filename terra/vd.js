@@ -1,6 +1,6 @@
 import{mnemonicGenerate} from '@polkadot/util-crypto'
 
-import{MnemonicKey,Key} from '@terra-money/terra.js'
+import{MnemonicKey} from '@terra-money/terra.js'
 
 import secp256k1 from 'secp256k1'
 
