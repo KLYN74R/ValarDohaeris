@@ -1,4 +1,7 @@
 import RippleKeys from 'ripple-keypairs'
+import crypto from 'crypto'
+
+let SHA256=x=>crypto.createHash('sha256').update(x).digest('hex');
 
 
 // XPR GSVDT scheme
@@ -15,9 +18,9 @@ export default{
 
     },
 
-    sign:(stringData,privateKey)=>RippleKeys.sign(stringData,privateKey),
+    sign:(stringData,privateKey)=>RippleKeys.sign(SHA256(stringData),privateKey),
 
-    verify:(plainText,signature,publicKey)=>RippleKeys.verify(plainText,signature,publicKey)
+    verify:(plainText,signature,publicKey)=>RippleKeys.verify(SHA256(plainText),signature,publicKey)
 
 
 }
