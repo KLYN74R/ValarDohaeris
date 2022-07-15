@@ -17,9 +17,11 @@ export default {
 
     generate:()=>{
         
-        let acc=createWalletFromMnemonic(mnemonicGenerate())
+        let mnemonic = mnemonicGenerate()
 
-        return {privatekey:Buffer.from(acc.privateKey).toString('hex'),publicKey:Buffer.from(acc.publicKey).toString('hex')}
+        let acc=createWalletFromMnemonic(mnemonic)
+
+        return {mnemonic,address:acc.address,privatekey:Buffer.from(acc.privateKey).toString('hex'),publicKey:Buffer.from(acc.publicKey).toString('hex')}
 
     },
 
