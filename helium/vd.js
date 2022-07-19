@@ -13,6 +13,8 @@ export default {
             
         let kp=await HeliumKeypair.makeRandom()
 
+        console.log(kp)
+
         return {publicKey:Buffer.from(kp.publicKey).toString('base64'),privateKey:Buffer.from(kp.privateKey).toString('base64'),address:kp.address.b58}
 
     },
