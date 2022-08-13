@@ -5,16 +5,16 @@ import bip39 from 'bip39'
 
 
 
-//KLYNTAR native format
+//KLYNTAR native format with BIP39 support
 //RFC8410 Ed25519 keypair with base58 encoded pubkey as address and 64 bytes base64 encoded signature
 export default {
 
 
-    generate:async mnemonic=>{
+    generate:async (mnemonic,mnemoPass)=>{
 
         mnemonic ||= bip39.generateMnemonic()
 
-        let seed = await bip39.mnemonicToSeed(mnemonic)
+        let seed = await bip39.mnemonicToSeed(mnemonic,mnemoPass)
 
         let keypair=nacl.sign.keyPair.fromSeed(seed.slice(32))
 

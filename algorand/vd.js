@@ -7,9 +7,11 @@ import AlgoSDK from 'algosdk'
 //Ed25519
 export default {
 
-    generate:()=>{
+    generate:mnemonic=>{
             
-        let acc=AlgoSDK.generateAccount(),temp=acc.sk
+        let acc= mnemonic ? AlgoSDK.mnemonicToSecretKey(mnemonic) : AlgoSDK.generateAccount(),
+        
+            temp=acc.sk
 
         acc.sk=Buffer.from(acc.sk).toString('hex')
 
