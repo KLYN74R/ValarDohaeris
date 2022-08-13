@@ -1,6 +1,7 @@
-
 import bitcore from 'bitcore-lib'//BTC
 
+
+//Other BTC forks and similar cryptocurrencies
 //import dashcore from '@dashevo/dashcore-lib'//DASH
 //import bitdoge from 'bitcore-doge-lib'//DOGE
 //import bitlite from 'litecore-lib'//LTC
@@ -8,40 +9,61 @@ import bitcore from 'bitcore-lib'//BTC
 //import qtum from 'qtumcore-lib'//https://github.com/qtumproject/qtumcore-lib/blob/master/docs/examples.md
 
 
-let privateKey = bitcore.PrivateKey('fee0a1f7afebf9d2a5a80c0c98a31c709681cce195cbcd06342b517970c0be1e'),
+
+
+export default {
+
+
+    generate:hexOrWIF=>{
+
+        let privateKey = bitcore.PrivateKey(hexOrWIF),
+
+            publicKey = privateKey.toPublicKey()
     
-    toSign = Buffer.from('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa','hex'),
+        return {
+
+            privateKey:privateKey.toWIF(),
+            
+            publicKey:publicKey.toString(),
+
+            p2wpkh:publicKey.toAddress('mainnet','witnesspubkeyhash').toString(),
+
+            p2sh:publicKey.toAddress('mainnet','scripthash').toString(),
+
+            p2pkh:publicKey.toAddress('mainnet','pubkeyhash').toString()
+
+        }
+
     
-    ecdsa = new bitcore.crypto.ECDSA()
-
-console.log(toSign.length)
-
-ecdsa.hashbuf = toSign
-ecdsa.privkey = privateKey
-ecdsa.pubkey = privateKey.toPublicKey()
-ecdsa.deterministicK()
-
-//Make exportable
-let stringSig=Buffer.from(ecdsa.sign().sig.toDER()).toString('base64'),publicKey=privateKey.toPublicKey()
-
-console.log(toSign)
-console.log('SIGNATURE is ->',stringSig)
-
-console.log(ecdsa.verify(toSign,bitcore.crypto.Signature.parseDER(Buffer.from(stringSig,'base64'),publicKey)).verified)//should be true
-
-//Print different type of addresses from publicKey
-console.log(publicKey.toAddress('testnet','witnesspubkeyhash').toString())
-console.log(publicKey.toAddress('testnet','pubkeyhash').toString())
-console.log(publicKey.toAddress('testnet','scripthash').toString())
+    },
 
 
 
-//Retrieved PUB keys
+    sign:(data,hexOrWIFforPrivateKey)=>{
 
-console.log('PUB ',publicKey.toString())
+        let privateKey = bitcore.PrivateKey(hexOrWIFforPrivateKey),
+    
+            message = new bitcore.Message(data),
 
-let retrievedPublic=bitcore.PublicKey(publicKey.toString())
+            signature = message.sign(privateKey)
 
-console.log('Retrieved pub is ',retrievedPublic)
+            
+        return {
+            
+            publicKey:privateKey.toPublicKey().toString(),
+            
+            signature
+        
+        }
+
+    },
 
 
+
+    verify:(data,signature,pubkey)=>{
+        
+        return new bitcore.Message(data).verify(bitcore.PublicKey(pubkey).toAddress('mainnet','pubkeyhash').toString(),signature)
+
+    }
+
+}
