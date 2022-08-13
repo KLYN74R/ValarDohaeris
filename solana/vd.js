@@ -1,9 +1,8 @@
 import Solana from '@solana/web3.js'
-
+import nacl from 'tweetnacl'
 import bip39 from 'bip39'
 
 
-let account = Solana.Keypair.fromSecretKey(keyPairFromSeed.prv)
 
 
 export default {
@@ -11,54 +10,48 @@ export default {
 
     generate:async(mnemonic,mnemoPassword)=>{
 
-        let privateKey = bitcore.PrivateKey(hexOrWIF),
+        mnemonic ||=bip39.generateMnemonic()
 
-            publicKey = privateKey.toPublicKey()
-    
+        let seed = bip39.mnemonicToSeedSync(mnemonic,mnemoPassword)
+
+        let pair = Solana.Keypair.fromSeed(seed.slice(0,32))
+
         return {
-
-            privateKey:privateKey.toWIF(),
             
-            publicKey:publicKey.toString(),
+            privateKey: Buffer.from(pair.secretKey).toString('hex'),
 
-            p2wpkh:publicKey.toAddress('mainnet','witnesspubkeyhash').toString(),
+            pubkey:pair.publicKey.toBuffer().toString('hex'),
 
-            p2sh:publicKey.toAddress('mainnet','scripthash').toString(),
+            address:pair.publicKey.toBase58(),
 
-            p2pkh:publicKey.toAddress('mainnet','pubkeyhash').toString()
-
+            mnemonic
+        
         }
-
     
     },
 
 
+    sign:(data,privateKey)=>Buffer.from(
+        
+        nacl.sign.detached(
+            
+            new Uint8Array(Buffer.from(data,'utf-8')),
+            new Uint8Array(Buffer.from(privateKey,'hex'))
+            
+        )
+        
+    ).toString('base64'),
 
-    sign:(data,hexOrWIFforPrivateKey)=>{
 
-        let privateKey = bitcore.PrivateKey(hexOrWIFforPrivateKey),
+    verify:(data,signature,pubKey)=>
     
-            message = new bitcore.Message(data),
-
-            signature = message.sign(privateKey)
-
+        nacl.sign.detached.verify(
             
-        return {
+            new Uint8Array(Buffer.from(data,'utf-8')),
+            new Uint8Array(Buffer.from(signature,'base64')),
+            new Uint8Array(Buffer.from(pubKey,'hex'))
             
-            publicKey:privateKey.toPublicKey().toString(),
-            
-            signature
-        
-        }
+        )
 
-    },
-
-
-
-    verify:(data,signature,pubkey)=>{
-        
-        return new bitcore.Message(data).verify(bitcore.PublicKey(pubkey).toAddress('mainnet','pubkeyhash').toString(),signature)
-
-    }
 
 }
