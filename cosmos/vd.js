@@ -1,23 +1,22 @@
-import{mnemonicGenerate} from '@polkadot/util-crypto'
-
 import Tendermint from '@tendermint/sig'
 
 import secp256k1 from 'secp256k1'
 
 import crypto from 'crypto'
 
+import bip39 from 'bip39'
+
+
 let {createWalletFromMnemonic} = Tendermint
-
-
 
 
 
 export default {
 
 
-    generate:()=>{
+    generate:mnemonic=>{
         
-        let mnemonic = mnemonicGenerate()
+        mnemonic ||= bip39.generateMnemonic()
 
         let acc=createWalletFromMnemonic(mnemonic)
 
