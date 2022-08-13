@@ -1,6 +1,9 @@
+import ethers from 'ethers'
+
 import Web3 from 'web3'
 
 let web3=new Web3()
+
 
 
 //For EVM chains which supports such format
@@ -8,12 +11,22 @@ let web3=new Web3()
 //ECDSA (secp256k1 curve) with 32 bytes private key
 export default {
     
-    generate:()=>{
+    generate:(mnemoPhrase,path,wordlist)=>{
+
+        if(!mnemoPhrase){
+
+            let {address,privateKey,publicKey,mnemonic} = ethers.Wallet.createRandom()
         
-        let {address,privateKey}=web3.eth.accounts.create()
-        
-        return {address,privateKey}
+            return {address,privateKey,publicKey,mnemonic}
     
+        }else{
+
+            let {address,privateKey,publicKey,mnemonic} = ethers.Wallet.fromMnemonic(mnemoPhrase,path,wordlist);
+
+            return {address,privateKey,publicKey,mnemonic}
+            
+        }
+            
     },
     
     sign:(data,privateKey)=>web3.eth.accounts.sign(data,privateKey),

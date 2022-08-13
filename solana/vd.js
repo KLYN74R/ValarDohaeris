@@ -9,7 +9,7 @@ let account = Solana.Keypair.fromSecretKey(keyPairFromSeed.prv)
 export default {
 
 
-    generate:async(mnemonic,mnemoPassword,)=>{
+    generate:async(mnemonic,mnemoPassword)=>{
 
         let privateKey = bitcore.PrivateKey(hexOrWIF),
 
