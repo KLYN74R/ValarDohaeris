@@ -8,11 +8,11 @@ let SHA256=x=>crypto.createHash('sha256').update(x).digest('hex');
 //ECDSA (secp256k1 curve) and ED25519
 export default{
 
-    generate:seedOptions=>{
+    generate:(seed,seedOptions)=>{
             
-        let seed=RippleKeys.generateSeed(seedOptions),
+        seed||=RippleKeys.generateSeed(seedOptions),
                 
-            keyPair=RippleKeys.deriveKeypair(seed)
+        keyPair=RippleKeys.deriveKeypair(seed)
 
         return {seed,keyPair,address:RippleKeys.deriveAddress(keyPair.publicKey)}
 
