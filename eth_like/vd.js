@@ -31,6 +31,11 @@ export default {
     
     sign:(data,privateKey)=>web3.eth.accounts.sign(data,privateKey),
     
-    verify:(signature,address)=>web3.eth.accounts.recover(signature)===address
+    verify:(_,signature,address)=>{
+
+        signature = JSON.parse(signature)
+
+        return web3.eth.accounts.recover(signature)===address
+    }
 
 }
