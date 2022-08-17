@@ -1,3 +1,4 @@
+import {derivePath} from 'ed25519-hd-key'
 import Solana from '@solana/web3.js'
 import Base58 from 'base-58'
 import nacl from 'tweetnacl'
@@ -9,9 +10,9 @@ import bip39 from 'bip39'
 export default {
 
 
-    generate:async(type,mnemonicOrPrivateKey,mnemoPassword)=>{
+    generate:async(type,mnemonicOrPrivateKey,bip44Path,mnemoPassword)=>{
 
-        let pair, branch=true
+        let pair, branch=false
 
         if(type==='FROM_PRIVATE_KEY'){
 
@@ -20,18 +21,21 @@ export default {
 
         }else{
 
-            //Otherwise - generate from mnemonic folliwing BIP
+            //Otherwise - generate from mnemonic folliwing BIP44
+            //! BIP44 path has the following format for Solana ===> m/44'/501'/<INDEX>'/0'
+
             mnemonicOrPrivateKey ||=bip39.generateMnemonic()
+
+            bip44Path ||=`m/44'/501'/0'/0'`
+
 
             let seed = bip39.mnemonicToSeedSync(mnemonicOrPrivateKey,mnemoPassword)
     
-            pair = Solana.Keypair.fromSeed(seed.slice(0,32))
+            pair = Solana.Keypair.fromSeed(derivePath(bip44Path,seed.slice(0,32)).key)
 
-            branch = false
+            branch = true
 
         }
-
-        console.log('Private Key',pair)
 
 
         return {
@@ -40,8 +44,10 @@ export default {
 
             address:pair.publicKey.toBase58(),
 
-            mnemonic:branch && mnemonicOrPrivateKey //if it was generation via mnemonic - return it,otherwise no sense to return duplicate of privatekey
+            mnemonic:branch && mnemonicOrPrivateKey, //if it was generation via mnemonic - return it,otherwise no sense to return duplicate of privatekey
         
+            bip44Path:branch && bip44Path
+
         }
     
     },
