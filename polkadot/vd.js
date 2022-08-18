@@ -13,7 +13,7 @@ export default {
     generate:async(mnemonic,bip44Path,mnemoPassword,ss58Format=0)=>{
 
         
-        mnemonicOrPrivateKey ||=bip39.generateMnemonic()
+        mnemonic ||=bip39.generateMnemonic()
 
         bip44Path ||=`m/44'/354'/0'/0'`
 

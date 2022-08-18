@@ -4,7 +4,7 @@ import polkadot from '../polkadot/vd.js';
 
 export default {
 
-    generate:(mnemonic,bip44Path,mnemoPassword,ss58Format)=>{
+    generate:(mnemonic,bip44Path,mnemoPassword,_)=>{
 
         bip44Path ||=`m/44'/434'/0'/0'`
         
