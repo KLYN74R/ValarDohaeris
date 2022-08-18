@@ -11,7 +11,7 @@ let web3=new Web3()
 //ECDSA (secp256k1 curve) with 32 bytes private key
 export default {
     
-    generate:(mnemoPhrase,path,wordlist)=>{
+    generate:(mnemoPhrase,bip44Path,wordlist)=>{
 
         if(!mnemoPhrase){
 
@@ -21,7 +21,7 @@ export default {
     
         }else{
 
-            let {address,privateKey,publicKey,mnemonic} = ethers.Wallet.fromMnemonic(mnemoPhrase,path,wordlist);
+            let {address,privateKey,publicKey,mnemonic} = ethers.Wallet.fromMnemonic(mnemoPhrase,bip44Path,wordlist);
 
             return {address,privateKey,publicKey,mnemonic}
             

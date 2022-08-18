@@ -1,4 +1,5 @@
 import{encodeAddress} from '@polkadot/util-crypto'
+import {derivePath} from 'ed25519-hd-key'
 import nacl from 'tweetnacl'
 import bip39 from 'bip39'
 
@@ -9,24 +10,28 @@ import bip39 from 'bip39'
 export default {
 
 
-    generate:async(mnemonic,mnemoPassword,ss58Format=0)=>{
+    generate:async(mnemonic,bip44Path,mnemoPassword,ss58Format=0)=>{
 
         mnemonic ||=bip39.generateMnemonic()
 
+        bip44Path ||=`m/44'/354'/0'/0'`
+
         let seed = bip39.mnemonicToSeedSync(mnemonic,mnemoPassword)
         
-        let pair = nacl.sign.keyPair.fromSeed(seed.slice(0,32))
+        let pair = nacl.sign.keyPair.fromSeed(derivePath(bip44Path,seed.slice(0,32)).key)
 
      
         return {
             
             privateKey: Buffer.from(pair.secretKey).toString('hex'),
 
-            pubkey:Buffer.from(pair.publicKey).toString('hex'),
+            publicKey:Buffer.from(pair.publicKey).toString('hex'),
 
             address:encodeAddress(pair.publicKey,ss58Format),
 
-            mnemonic
+            mnemonic,
+
+            bip44Path
         
         }
     
@@ -56,11 +61,6 @@ export default {
         )
     ,
         
-    toKusama:hexPubKey=>encodeAddress(Buffer.from(hexPubKey,'hex'),2),
-
-    toSubstrate:hexPubKey=>encodeAddress(Buffer.from(hexPubKey,'hex'),42),
-
-    toPolkadot:hexPubKey=>encodeAddress(Buffer.from(hexPubKey,'hex'),0),
-
+    toSubstrate:hexPubKey=>encodeAddress(Buffer.from(hexPubKey,'hex'),42)
 
 }
