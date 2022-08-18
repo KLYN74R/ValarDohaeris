@@ -1,3 +1,4 @@
+import {derivePath} from 'ed25519-hd-key'
 import nacl from 'tweetnacl'
 import tonweb from 'tonweb'
 import bip39 from 'bip39'
@@ -8,13 +9,16 @@ import bip39 from 'bip39'
 export default {
 
 
-    generate:async(mnemonic,mnemoPassword)=>{
+    generate:async(mnemonic,bip44Path,mnemoPassword)=>{
 
         mnemonic ||=bip39.generateMnemonic()
 
+        bip44Path ||=`m/44'/607'/0'/0'`
+
+
         let seed = bip39.mnemonicToSeedSync(mnemonic,mnemoPassword)
         
-        let pair = nacl.sign.keyPair.fromSeed(seed.slice(0,32))
+        let pair = nacl.sign.keyPair.fromSeed(derivePath(bip44Path,seed.slice(0,32)).key)
 
      
         return {
@@ -25,7 +29,11 @@ export default {
 
             address:(await new tonweb().wallet.create({publicKey:pair.publicKey}).getAddress()).toString(true, true, true, false),
 
-            mnemonic
+            mnemonic,
+
+            bip44Path,
+
+            type:'V3R1'
         
         }
     

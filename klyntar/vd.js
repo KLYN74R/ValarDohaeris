@@ -11,7 +11,7 @@ import bip39 from 'bip39'
 export default {
 
 
-    generate:async (mnemonic,bip44Path,mnemoPass)=>{
+    generate:async(mnemonic,bip44Path,mnemoPass)=>{
 
         mnemonic ||= bip39.generateMnemonic()
 

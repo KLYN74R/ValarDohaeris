@@ -10,7 +10,13 @@ import bip39 from 'bip39'
 export default {
 
 
-    generate:async(mnemonic=bip39.generateMnemonic(),bip44Path=`m/44'/354'/0'/0'`,mnemoPassword,ss58Format=0)=>{
+    generate:async(mnemonic,bip44Path,mnemoPassword,ss58Format=0)=>{
+
+        
+        mnemonicOrPrivateKey ||=bip39.generateMnemonic()
+
+        bip44Path ||=`m/44'/354'/0'/0'`
+
 
         let seed = bip39.mnemonicToSeedSync(mnemonic,mnemoPassword)
         
