@@ -1,13 +1,14 @@
-import{encodeAddress} from '@polkadot/util-crypto'
+import{encodeAddress,mnemonicToMiniSecret} from '@polkadot/util-crypto'
 import {derivePath} from 'ed25519-hd-key'
 import nacl from 'tweetnacl'
 import bip39 from 'bip39'
 
 
 
+
 //Ed25519(native)
 //Signature is base64 encoded
-export default {
+let POL = {
 
 
     generate:async(mnemonic,bip44Path,mnemoPassword,ss58Format=0)=>{
@@ -15,12 +16,11 @@ export default {
         
         mnemonic ||=bip39.generateMnemonic()
 
-        bip44Path ||=`m/44'/354'/0'/0'`
+        // bip44Path ||=`m/44'/354'/0'/0'`
 
-
-        let seed = bip39.mnemonicToSeedSync(mnemonic,mnemoPassword)
+        let seed = mnemonicToMiniSecret(mnemonic,mnemoPassword)
         
-        let pair = nacl.sign.keyPair.fromSeed(derivePath(bip44Path,seed.slice(0,32)).key)
+        let pair = nacl.sign.keyPair.fromSeed(seed)
 
      
         return {
@@ -66,3 +66,8 @@ export default {
     toSubstrate:hexPubKey=>encodeAddress(Buffer.from(hexPubKey,'hex'),42)
 
 }
+
+
+let pair = await POL.generate('hurdle month pizza dinosaur disagree yellow adult loan tobacco oyster blame light')
+
+console.log(pair)
