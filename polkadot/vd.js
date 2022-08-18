@@ -8,7 +8,7 @@ import bip39 from 'bip39'
 
 //Ed25519(native)
 //Signature is base64 encoded
-let POL = {
+export default {
 
 
     generate:async(mnemonic,bip44Path,mnemoPassword,ss58Format=0)=>{
@@ -66,8 +66,3 @@ let POL = {
     toSubstrate:hexPubKey=>encodeAddress(Buffer.from(hexPubKey,'hex'),42)
 
 }
-
-
-let pair = await POL.generate('hurdle month pizza dinosaur disagree yellow adult loan tobacco oyster blame light')
-
-console.log(pair)
